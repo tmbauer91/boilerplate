@@ -3,6 +3,11 @@ package com.boilerplate.missionDatabase.mission;
 import org.springframework.data.annotation.Id;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -67,6 +72,51 @@ public class Mission {
     public File getFile() throws IOException {
         return binaryToFile(fileData);
     }
+
+    public void addBriefingFile(MultipartFile[] files) throws IOException {
+        if(this.type != MissionType.DCS) {
+            throw new IOException("Must be DCS.miz file");
+        }
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ZipInputStream zin = new ZipInputStream(new FileInputStream(binaryToFile(this.fileData)));
+        ZipOutputStream zout = new ZipOutputStream(bos);
+
+        byte[] buf = new byte[1024];
+
+        ZipEntry entry = zin.getNextEntry();
+        boolean kneeboardExists = false;
+        while(entry != null){
+            if(entry.getName().equals("KNEEBOARD")){
+                kneeboardExists = true;
+            } else {
+                zout.putNextEntry(new ZipEntry(entry.getName()));
+                int len;
+                while ((len = zin.read(buf)) > 0) {
+                    zout.write(buf, 0 , len);
+                }
+            }
+            entry = zin.getNextEntry();
+        }
+        zin.close();
+        if(!kneeboardExists){
+            zout.putNextEntry( new ZipEntry("KNEEBOARD"));
+        }
+
+        for(MultipartFile file : files){
+            InputStream in = file.getInputStream();
+            String path = "KNEEBOARD/" + file.getName();
+            zout.putNextEntry(new ZipEntry(path));
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                zout.write(buf, 0 , len);
+            }
+            zout.closeEntry();
+            in.close();
+        }
+        zout.close();
+        this.fileData = new Binary(bos.toByteArray());
+    }
+
 
     private File binaryToFile(Binary binary) throws IOException {
 
