@@ -1,17 +1,21 @@
 # boilerplate
-A RESTful Web Service to store and retrieve files
+This repo is intended to be a simple RESTful service to take mission files from various video games submitted for upload by a front end and store them in a Mongo database. Once stored in the Mongo, the user has the option to retrieve them, and/or edit them by adding additional briefing materials in the form of .pngs to the file. Ultimately files will be tied to specific users, who will have the option to keep them private or share them with others.
 
 ## Motivation
-This is meant to be a simple rest battery to take mission files from various video games submitted for upload by a front end and store them in a Mongo database for later retrieval. This will facilitate both hosting the files in an easily accessible spot for users to retrieve them, as well as allow front end functionality to retrieve and edit the files to insert pertinent briefing material before distribution. 
+I lead a group of players that meet on a weekly basis to develop skills and fly "serious" missions in Digital Combat Simulator. As part of the process of organizing and briefing each mission, participants requested a more coherent way to review the mission plan during the flight without resorting to alt-tabbing and reviewing the briefing document. The file format for the DCS mission includes functionality to include supplemental briefing material in the form of .png files, which are then visible to players via an aircraft kneeboard in game. This repo is an an attempt to make an easy way for users to upload files, add whatever supplemental briefing material desired, and then make those files available for other users. The .pbo format associated with the infantry simulator Arma is also included for convienience.
 
 ## Tech/framework used
 
 Built with
+* Spring Boot
 * Spring Rest
 * Swagger
 * MongoDb
 * Gradle
 
 ## Installation
+Download and unpack the zip into your work space. Once placed, build via:
+gradlew build && java -jar build/libs/com.boilerplate-0.0.1.jar
 
-Download the zip to your workspace, then import it into your IDE of choice. Either run it directly from there, or combile it into a jar
+When the repo is running, check Swagger for available options at:
+http://localhost:8080/swagger-ui.html#/
